@@ -1,0 +1,120 @@
+# =========================================
+#      NODE + NEXT.JS + BACKEND
+# =========================================
+
+# Dependências
+node_modules/
+
+# Build output (Next.js)
+.next/
+out/
+dist/
+
+# Build output (backend)
+backend/dist/
+backend/build/
+
+# Cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache/
+.next/cache/
+
+# Ambiente
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+*.env
+
+# Log files
+logs/
+*.log
+*.log.*
+backend/logs/
+frontend/web/logs/
+
+# Database (caso use SQLite no futuro)
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+
+# =========================================
+#            SISTEMA OPERACIONAL
+# =========================================
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux / editor
+*~
+.cache/
+.config/
+/tmp
+.swp
+.swo
+
+# =========================================
+#               VSCODE / IDE
+# =========================================
+
+.vscode/
+.vscode/*
+
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =========================================
+#               ARQUIVOS DE BUILD
+# =========================================
+
+# Produção de frontend
+frontend/web/.next/
+frontend/web/out/
+
+# Produção de backend
+backend/dist/
+backend/build/
+
+# =========================================
+#               UPLOADS / MÍDIA
+# =========================================
+
+uploads/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Se quiser armazenar imagens do projeto, remova essa parte
+# Ou crie uma pasta separada como /public/assets
+
+# =========================================
+#               OUTROS
+# =========================================
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Coverage de testes
+coverage/
+.nyc_output/
+
+# Docker
+docker-data/
+docker-compose.override.yml
