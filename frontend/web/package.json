@@ -9,12 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@turf/turf": "^7.3.0",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
     "leaflet": "^1.9.4",
-    "next": "16.0.3",
+    "next": "^16.0.4",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "24.10.1",

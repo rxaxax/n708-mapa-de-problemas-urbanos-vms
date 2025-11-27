@@ -24,7 +24,7 @@ export default function LoginPage() {
       // Chama o hook useAuth para salvar o token no localStorage
       login(response.token);
 
-      router.push("/dashboard");
+      router.push("/reportar_problema");
     } catch (err: any) {
       console.log(err);
       setError("Credenciais inválidas");

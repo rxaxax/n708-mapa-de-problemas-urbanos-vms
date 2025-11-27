@@ -1,23 +1,4 @@
-// "use client";
-
-// export default function ProblemCard({ title, description, category }) {
-//   return (
-//     <div className="card shadow-sm mb-3">
-//       <div className="card-body">
-//         <h5 className="card-title fw-bold">{title}</h5>
-//         <span className="badge bg-primary mb-2">{category}</span>
-//         <p className="card-text text-muted">{description}</p>
-//         <button className="btn btn-outline-primary btn-sm">
-//           Ver no mapa
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
-
-import React from "react";
 
 export type Problem = {
   title: string;

@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 export default function SidebarFilters() {
   return (
     <aside id="sidebar" className="col-12 col-md-3 col-lg-2 p-3 bg-white border-end">
