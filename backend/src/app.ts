@@ -27,6 +27,8 @@ import mongoose from "mongoose";
 import reportRoutes from "./routes/report.routes";
 import userRoutes from "./routes/user.routes";
 import dotenv from "dotenv";
+import problemRoutes from "./routes/problemRoutes.js";
+
 
 dotenv.config();
 
@@ -38,6 +40,8 @@ app.use(express.json());
 // Rotas
 app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
+app.use("/problems", problemRoutes);
+
 
 // Conexão com MongoDB
 mongoose.connect(process.env.MONGO_URI!)

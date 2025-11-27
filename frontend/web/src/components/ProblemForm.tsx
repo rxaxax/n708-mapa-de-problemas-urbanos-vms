@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AddressSearch from "./AddressSearch";
 import LocationPickerMap from "./LocationPickerMap";
+import { createProblem } from "../services/reportProblemService";
 
 export default function ProblemForm() {
   const [formData, setFormData] = useState({
@@ -35,12 +36,32 @@ export default function ProblemForm() {
     }));
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    console.log("FORM DATA ENVIADO:", formData);
-    // futuramente: POST para API
+    try {
+      console.log("Enviando dados:", formData);
+
+      const result = await createProblem(formData);
+
+      alert("Problema enviado com sucesso!");
+      console.log("Resposta da API:", result);
+
+      // limpar formulário
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        anonymous: false,
+        address: "",
+        lat: -3.74498,
+        lng: -38.57305,
+      });
+    } catch (error) {
+      alert("Falha ao enviar problema.");
+    }
   };
+  console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL);
 
   return (
     <form
