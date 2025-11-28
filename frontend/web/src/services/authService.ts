@@ -1,32 +1,41 @@
 import api from "./api";
 
+// ----------------------------
+// REGISTER
+// ----------------------------
 export async function register(data: {
   name: string;
   email: string;
   password: string;
 }) {
-  const res = await api.post("/auth/register", data);
-  localStorage.setItem("token", res.data.token);
+  const res = await api.post("/users/register", data);
+
+  if (res.data?.token) {
+    localStorage.setItem("token", res.data.token);
+  }
+
   return res.data;
 }
 
-export async function loginUser(credentials: { email: string; password: string }) {
-  const res = await fetch("http://localhost:4000/api/users/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
+// ----------------------------
+// LOGIN
+// ----------------------------
+export async function loginUser(credentials: {
+  email: string;
+  password: string;
+}) {
+  const res = await api.post("/users/login", credentials);
 
-  if (!res.ok) {
-    throw new Error("Login inválido");
+  if (res.data?.token) {
+    localStorage.setItem("token", res.data.token);
   }
 
-  return res.json(); // deve retornar { token, user }
+  return res.data; // { token, user }
 }
 
-
+// ----------------------------
+// LOGOUT
+// ----------------------------
 export function logout() {
   localStorage.removeItem("token");
 }
