@@ -100,7 +100,7 @@ export default function AddressSearch({
 
   return (
     <div className="mb-3">
-      <label className="form-label">Buscar Endereço</label>
+      <label className="form-label">Endereço *</label>
 
       <div className="input-group">
         <input

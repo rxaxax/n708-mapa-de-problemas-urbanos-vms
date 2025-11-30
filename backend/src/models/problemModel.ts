@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 const ProblemSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
-    description: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
 
     category: {
       type: String,
@@ -51,7 +51,7 @@ const ProblemSchema = new Schema(
     images: [
       {
         type: String,
-        match: /^https?:\/\/.+/ // opcional
+        match: /\.(jpg|jpeg|png|gif)$/i,
       },
     ],
   },

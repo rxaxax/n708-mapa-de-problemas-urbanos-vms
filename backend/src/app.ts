@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import userRoutes from "./routes/userRoutes";
-import problemRoutes from "./routes/problemRoutes.js";
+import problemRoutes from "./routes/problemRoutes";
 import dotenv from "dotenv";
 
 
@@ -12,6 +12,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
+
 
 // Rotas
 app.use("/users", userRoutes);

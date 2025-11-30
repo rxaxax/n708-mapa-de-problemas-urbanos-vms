@@ -15,7 +15,7 @@ export async function register(req: Request, res: Response) {
     res.status(201).json({
       message: "Usuário registrado",
       user: {
-        id: user.id,
+        _id: user.id,
         name: user.name,
         email: user.email,
       },
@@ -34,8 +34,7 @@ export async function login(req: Request, res: Response) {
     // ⬇ NECESSÁRIO POR CAUSA DO select:false
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user)
-      return res.status(400).json({ error: "Credenciais inválidas" });
+    if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch)
@@ -44,13 +43,12 @@ export async function login(req: Request, res: Response) {
     res.json({
       message: "Login realizado com sucesso",
       user: {
-        id: user.id,
+        _id: user.id,
         name: user.name,
         email: user.email,
       },
       token: generateToken(user.id, user.email),
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao fazer login" });

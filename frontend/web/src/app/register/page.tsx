@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import "bootstrap/dist/css/bootstrap.min.css";
-import React from "react";
+import { useRouter } from "next/navigation";
+import { register as registerService } from "../../services/authService";
+import { useAuthContext } from "../../context/authContext";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { login } = useAuthContext();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -17,33 +21,39 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
+  // ------------------------------
+  // 🔍 Validação local
+  // ------------------------------
+  function validate() {
+    const e: any = {};
 
-    if (!form.name.trim()) newErrors.name = "O nome é obrigatório.";
+    if (!form.name.trim()) e.name = "O nome é obrigatório.";
 
-    if (!form.email.trim()) newErrors.email = "O email é obrigatório.";
+    if (!form.email.trim()) e.email = "O email é obrigatório.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      newErrors.email = "Formato de email inválido.";
+      e.email = "Formato de email inválido.";
 
-    if (!form.password) newErrors.password = "A senha é obrigatória.";
+    if (!form.password) e.password = "A senha é obrigatória.";
     else if (form.password.length < 6)
-      newErrors.password = "A senha deve ter ao menos 6 caracteres.";
+      e.password = "A senha deve ter ao menos 6 caracteres.";
 
     if (!form.confirmPassword)
-      newErrors.confirmPassword = "Confirme sua senha.";
+      e.confirmPassword = "Confirme sua senha.";
     else if (form.password !== form.confirmPassword)
-      newErrors.confirmPassword = "As senhas não coincidem.";
+      e.confirmPassword = "As senhas não coincidem.";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // ------------------------------
+  // 🔥 Enviar formulário
+  // ------------------------------
+  async function handleSubmit(e: any) {
     e.preventDefault();
     if (!validate()) return;
 
@@ -52,45 +62,39 @@ export default function RegisterPage() {
     setSuccessMsg("");
 
     try {
-      const res = await fetch(`http://localhost:4000/users/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
+      const data = await registerService({
+        name: form.name,
+        email: form.email,
+        password: form.password,
       });
 
-      const data = await res.json();
+      // login automático → salva no contexto e no localStorage
+      login({
+        token: data.token,
+        user: data.user,
+      });
 
-      if (!res.ok) {
-        setErrors({ api: data.error || "Erro ao registrar." });
-        setLoading(false);
-        return;
-      }
+      setSuccessMsg("Conta criada com sucesso!");
 
-      setSuccessMsg("Conta criada com sucesso! Redirecionando...");
-      setLoading(false);
-
-      // Redireciona após 1s
       setTimeout(() => {
-        window.location.href = "/login";
-      }, 1000);
-    } catch (error) {
-      setErrors({ api: "Erro ao conectar ao servidor." });
-      setLoading(false);
+        router.push("/");
+      }, 800);
+
+    } catch (err: any) {
+      console.error(err);
+
+      setErrors({
+        api: err?.response?.data?.error || "Erro ao registrar usuário.",
+      });
     }
-  };
+
+    setLoading(false);
+  }
 
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <div
-        className="card shadow p-4"
-        style={{ maxWidth: "450px", width: "100%" }}
-      >
+      <div className="card shadow p-4" style={{ maxWidth: "450px", width: "100%" }}>
+
         <h2 className="text-center mb-3">Criar Conta</h2>
 
         {errors.api && (
@@ -102,6 +106,8 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
+
+          {/* Nome */}
           <div className="mb-3">
             <label className="form-label">Nome</label>
             <input
@@ -111,11 +117,10 @@ export default function RegisterPage() {
               value={form.name}
               onChange={handleChange}
             />
-            {errors.name && (
-              <div className="invalid-feedback">{errors.name}</div>
-            )}
+            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
           </div>
 
+          {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input
@@ -125,11 +130,10 @@ export default function RegisterPage() {
               value={form.email}
               onChange={handleChange}
             />
-            {errors.email && (
-              <div className="invalid-feedback">{errors.email}</div>
-            )}
+            {errors.email && <div className="invalid-feedback">{errors.email}</div>}
           </div>
 
+          {/* Senha */}
           <div className="mb-3">
             <label className="form-label">Senha</label>
             <input
@@ -139,18 +143,15 @@ export default function RegisterPage() {
               value={form.password}
               onChange={handleChange}
             />
-            {errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
-            )}
+            {errors.password && <div className="invalid-feedback">{errors.password}</div>}
           </div>
 
+          {/* Confirmar Senha */}
           <div className="mb-3">
             <label className="form-label">Confirmar senha</label>
             <input
               type="password"
-              className={`form-control ${
-                errors.confirmPassword ? "is-invalid" : ""
-              }`}
+              className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
@@ -160,6 +161,7 @@ export default function RegisterPage() {
             )}
           </div>
 
+          {/* Botão */}
           <button
             type="submit"
             className="btn btn-primary w-100 mt-2"

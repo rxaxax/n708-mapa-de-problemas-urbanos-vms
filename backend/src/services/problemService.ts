@@ -1,30 +1,46 @@
 import mongoose from "mongoose";
-import Problem from "../models/problemModel.js";
+import Problem from "../models/problemModel";
 
 // Criar problema
 export async function createProblemService(data) {
   return await Problem.create(data);
 }
 
-// Buscar todos os problemas (opcional: filtrar por usuário)
+// Buscar todos os problemas (com populate)
 export async function getProblemsService(userId = null) {
   const filter = userId ? { userId } : {};
 
   return await Problem.find(filter)
     .sort({ createdAt: -1 })
-    .populate("userId", "name email"); // sem password
+    .populate("userId", "name email") // traz somente nome e email
+    .lean();
 }
 
 // Buscar problema por ID
 export async function getProblemByIdService(id) {
-  // Validação do ID
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null; // controller retorna 404
-  }
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
 
-  return await Problem.findById(id).populate("userId", "name email");
+  return await Problem.findById(id)
+    .populate("userId", "name email")
+    .lean();
 }
 
-export async function getMyProblemsService(userId: string) {
-  return await Problem.find({ userId }).sort({ createdAt: -1 });
+// Buscar problemas do usuário logado
+export async function getMyProblemsService(userId) {
+  return await Problem.find({ userId })
+    .sort({ createdAt: -1 })
+    .populate("userId", "name email")
+    .lean();
 }
+
+
+export async function updateProblemService(id, data) {
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
+  return await Problem.findByIdAndUpdate(id, data, { new: true }).lean();
+}
+
+export async function deleteProblemService(id) {
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
+  return await Problem.findByIdAndDelete(id);
+}
+
