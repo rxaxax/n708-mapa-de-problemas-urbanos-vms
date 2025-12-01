@@ -6,7 +6,7 @@ import axios from "axios";
 interface Props {
   onSelectAddress: (lat: number, lng: number, address: string) => void;
   externalAddress?: string;
-  label?: string;
+  label?: React.ReactNode;
 }
 
 export default function AddressSearch({
@@ -102,7 +102,7 @@ export default function AddressSearch({
 
   return (
     <div className="mb-3">
-      {label || <label className="form-label mb-1">Endereço *</label>}
+      {label ?? <label className="form-label mb-1">Endereço *</label>}
 
       <div className="input-group flex-column flex-sm-row">
         <input

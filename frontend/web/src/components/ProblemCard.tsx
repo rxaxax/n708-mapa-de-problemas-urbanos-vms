@@ -3,6 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 
+export type ProblemCardProps = {
+  id: string;
+  title: string;
+  description?: string;
+  address: string;
+  category?: string;
+  reportedBy?: string;
+  image?: string;
+  status?: string;
+  anonymous?: boolean;
+  createdAt?: string;
+  selected?: boolean;
+  isOwner?: boolean;
+  onClick?: () => void;
+  onDelete?: (id: string) => void;
+};
+
 export default function ProblemCard({
   id,
   title,
@@ -78,10 +95,7 @@ export default function ProblemCard({
 
         {/* DESCRIÇÃO */}
         {description && (
-          <p
-            className="small mb-1 text-truncate"
-            style={{ maxWidth: "100%" }}
-          >
+          <p className="small mb-1 text-truncate" style={{ maxWidth: "100%" }}>
             <strong>Descrição: </strong>
             {description}
           </p>

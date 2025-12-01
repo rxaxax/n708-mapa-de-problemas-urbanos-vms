@@ -13,6 +13,7 @@ import axios from "axios";
 import * as turf from "@turf/turf";
 import { useEffect } from "react";
 import { MANOEL_SATIRO_POLYGON } from "../data/manoelSatiroPolygon";
+import type { LatLngTuple, LatLngExpression } from "leaflet";
 
 const pinIcon = new L.Icon({
   iconUrl:
@@ -39,11 +40,16 @@ function ResizeHandler() {
   return null;
 }
 
-export default function LocationPickerMap({ lat, lng, onChangePosition }: Props) {
+export default function LocationPickerMap({
+  lat,
+  lng,
+  onChangePosition,
+}: Props) {
   // Converte polígono para Leaflet
-  const polygonCoords = MANOEL_SATIRO_POLYGON.geometry.coordinates[0].map(
-    (pair: number[]) => [pair[1], pair[0]]
-  );
+  const polygonCoords: LatLngTuple[] =
+    MANOEL_SATIRO_POLYGON.geometry.coordinates[0].map(
+      (pair: [number, number]) => [pair[1], pair[0]] as LatLngTuple
+    );
 
   // Centro oficial do bairro via Turf
   const centerPoint = turf.center(MANOEL_SATIRO_POLYGON);
@@ -96,7 +102,7 @@ export default function LocationPickerMap({ lat, lng, onChangePosition }: Props)
 
         {/* Polígono oficial */}
         <Polygon
-          positions={polygonCoords}
+          positions={polygonCoords as LatLngExpression[]}
           pathOptions={{ color: "blue", weight: 2 }}
         />
 

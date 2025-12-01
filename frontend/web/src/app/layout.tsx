@@ -1,3 +1,5 @@
+"use client";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "../components/Navbar";
 import { ReactNode } from "react";
@@ -5,15 +7,6 @@ import "leaflet/dist/leaflet.css";
 import "../styles/map.css";
 import "../styles/problemMap.css";
 import { AuthProvider } from "../context/AuthContext";
-
-export const metadata = {
-  title: "Mapa de Problemas Urbanos",
-};
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

@@ -1,4 +1,6 @@
-export const MANOEL_SATIRO_POLYGON = {
+import type { Feature, Polygon } from "geojson";
+
+export const MANOEL_SATIRO_POLYGON: Feature<Polygon> = {
   type: "Feature",
   properties: {
     name: "Vila Manoel Sátiro",

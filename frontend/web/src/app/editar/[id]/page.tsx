@@ -9,6 +9,7 @@ import {
 } from "../../../services/problemService";
 import AddressSearch from "../../../components/AddressSearch";
 import dynamic from "next/dynamic";
+import React from "react";
 
 const LocationPickerMap = dynamic(
   () => import("../../../components/LocationPickerMap"),
@@ -24,8 +25,8 @@ const CATEGORIES = [
   "Outros",
 ];
 
-export default function EditPage({ params }) {
-  const { id } = use(params);
+export default function EditPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   const router = useRouter();
 
   const [problem, setProblem] = useState(null);
