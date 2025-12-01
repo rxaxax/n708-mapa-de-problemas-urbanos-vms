@@ -71,7 +71,7 @@ export async function createProblem(req, res) {
     });
 
     // Remove informações sensíveis, mas mantém o ID
-    let result = newProblem.toObject();
+    let result = (newProblem as any).toObject();
 
     if (anonymous && result.userId) {
       result.userId = { name: "Anônimo" };

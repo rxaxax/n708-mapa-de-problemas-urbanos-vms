@@ -19,7 +19,7 @@ export function authMiddleware(req, res, next) {
       return res.status(500).json({ error: "Erro interno de autenticação" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
 
     req.user = {
       id: decoded.id,
