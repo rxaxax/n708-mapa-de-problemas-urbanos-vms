@@ -1,8 +1,7 @@
 import axios from "axios";
-import { API_URL } from "../config/api";
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
 // Injeta o token automaticamente em todas as requisições privadas
