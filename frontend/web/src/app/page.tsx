@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { getAllProblems, deleteProblem } from "../services/problemService";
 import ProblemCard from "../components/ProblemCard";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 
 // Mapa (sem SSR)
 const ProblemMap = dynamic(() => import("../components/ProblemMap"), {

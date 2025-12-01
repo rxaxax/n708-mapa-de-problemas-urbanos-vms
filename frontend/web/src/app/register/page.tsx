@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { register as registerService } from "../../services/authService";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/authContext";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -86,108 +86,107 @@ export default function RegisterPage() {
   }
 
   return (
-  <div className="container d-flex justify-content-center align-items-center py-5">
+    <div className="container d-flex justify-content-center align-items-center py-5">
+      <div
+        className="card shadow p-4 mx-3"
+        style={{ maxWidth: "450px", width: "100%" }}
+      >
+        <h2 className="text-center mb-3">Criar Conta</h2>
 
-    <div
-      className="card shadow p-4 mx-3"
-      style={{ maxWidth: "450px", width: "100%" }}
-    >
-      <h2 className="text-center mb-3">Criar Conta</h2>
+        {errors.api && (
+          <div className="alert alert-danger py-2">{errors.api}</div>
+        )}
 
-      {errors.api && (
-        <div className="alert alert-danger py-2">{errors.api}</div>
-      )}
+        {successMsg && (
+          <div className="alert alert-success py-2">{successMsg}</div>
+        )}
 
-      {successMsg && (
-        <div className="alert alert-success py-2">{successMsg}</div>
-      )}
+        <form onSubmit={handleSubmit} noValidate>
+          {/* Nome */}
+          <div className="mb-3">
+            <label className="form-label mb-1">Nome</label>
+            <input
+              type="text"
+              className={`form-control ${errors.name ? "is-invalid" : ""}`}
+              name="name"
+              placeholder="Seu nome"
+              autoComplete="name"
+              value={form.name}
+              onChange={handleChange}
+            />
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
+          </div>
 
-      <form onSubmit={handleSubmit} noValidate>
+          {/* Email */}
+          <div className="mb-3">
+            <label className="form-label mb-1">Email</label>
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="seuemail@exemplo.com"
+              className={`form-control ${errors.email ? "is-invalid" : ""}`}
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+            />
+            {errors.email && (
+              <div className="invalid-feedback">{errors.email}</div>
+            )}
+          </div>
 
-        {/* Nome */}
-        <div className="mb-3">
-          <label className="form-label mb-1">Nome</label>
-          <input
-            type="text"
-            className={`form-control ${errors.name ? "is-invalid" : ""}`}
-            name="name"
-            placeholder="Seu nome"
-            autoComplete="name"
-            value={form.name}
-            onChange={handleChange}
-          />
-          {errors.name && (
-            <div className="invalid-feedback">{errors.name}</div>
-          )}
-        </div>
+          {/* Senha */}
+          <div className="mb-3">
+            <label className="form-label mb-1">Senha</label>
+            <input
+              type="password"
+              autoComplete="new-password"
+              className={`form-control ${errors.password ? "is-invalid" : ""}`}
+              name="password"
+              placeholder="Digite sua senha"
+              value={form.password}
+              onChange={handleChange}
+            />
+            {errors.password && (
+              <div className="invalid-feedback">{errors.password}</div>
+            )}
+          </div>
 
-        {/* Email */}
-        <div className="mb-3">
-          <label className="form-label mb-1">Email</label>
-          <input
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            placeholder="seuemail@exemplo.com"
-            className={`form-control ${errors.email ? "is-invalid" : ""}`}
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-          {errors.email && (
-            <div className="invalid-feedback">{errors.email}</div>
-          )}
-        </div>
+          {/* Confirmar Senha */}
+          <div className="mb-3">
+            <label className="form-label mb-1">Confirmar senha</label>
+            <input
+              type="password"
+              autoComplete="new-password"
+              placeholder="Confirme sua senha"
+              className={`form-control ${
+                errors.confirmPassword ? "is-invalid" : ""
+              }`}
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleChange}
+            />
+            {errors.confirmPassword && (
+              <div className="invalid-feedback">{errors.confirmPassword}</div>
+            )}
+          </div>
 
-        {/* Senha */}
-        <div className="mb-3">
-          <label className="form-label mb-1">Senha</label>
-          <input
-            type="password"
-            autoComplete="new-password"
-            className={`form-control ${errors.password ? "is-invalid" : ""}`}
-            name="password"
-            placeholder="Digite sua senha"
-            value={form.password}
-            onChange={handleChange}
-          />
-          {errors.password && (
-            <div className="invalid-feedback">{errors.password}</div>
-          )}
-        </div>
+          {/* Botão */}
+          <button
+            type="submit"
+            className="btn btn-primary w-100 mt-3"
+            disabled={loading}
+          >
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </button>
+        </form>
 
-        {/* Confirmar Senha */}
-        <div className="mb-3">
-          <label className="form-label mb-1">Confirmar senha</label>
-          <input
-            type="password"
-            autoComplete="new-password"
-            placeholder="Confirme sua senha"
-            className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
-          />
-          {errors.confirmPassword && (
-            <div className="invalid-feedback">{errors.confirmPassword}</div>
-          )}
-        </div>
-
-        {/* Botão */}
-        <button
-          type="submit"
-          className="btn btn-primary w-100 mt-3"
-          disabled={loading}
-        >
-          {loading ? "Cadastrando..." : "Cadastrar"}
-        </button>
-      </form>
-
-      <p className="text-center mt-3">
-        Já tem conta? <Link href="/login">Entrar</Link>
-      </p>
+        <p className="text-center mt-3">
+          Já tem conta? <Link href="/login">Entrar</Link>
+        </p>
+      </div>
     </div>
-  </div>
-);
-
+  );
 }

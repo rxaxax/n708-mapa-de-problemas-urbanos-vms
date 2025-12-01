@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 import "leaflet/dist/leaflet.css";
 import "../styles/map.css";
 import "../styles/problemMap.css";
-import { AuthProvider } from "../context/AuthContext";
+import { AuthProvider } from "../context/authContext";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

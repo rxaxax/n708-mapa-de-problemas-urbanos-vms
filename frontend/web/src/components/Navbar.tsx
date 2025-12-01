@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 
 export default function Navbar() {
   const { isLogged, loading, logout } = useAuth();
@@ -26,7 +26,6 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid px-3">
-
         <Link className="navbar-brand fw-bold" href="/">
           Mapa Urbano
         </Link>
@@ -45,7 +44,6 @@ export default function Navbar() {
 
         <div id="navbarContent" className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">
-
             {!isLogged && (
               <>
                 <li className="nav-item">
@@ -81,7 +79,6 @@ export default function Navbar() {
                 </li>
               </>
             )}
-
           </ul>
         </div>
       </div>
