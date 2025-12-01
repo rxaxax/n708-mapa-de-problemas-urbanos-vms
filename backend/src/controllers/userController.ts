@@ -39,7 +39,7 @@ export async function login(req: Request, res: Response) {
 
     if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await (user as any).comparePassword(password);
     if (!isMatch)
       return res.status(400).json({ error: "Credenciais inválidas" });
 
