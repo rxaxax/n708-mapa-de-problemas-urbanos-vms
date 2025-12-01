@@ -1,37 +1,3 @@
-/* import { Router } from "express";
-import { upload } from "../config/multerConfig";
-import {
-  createProblem,
-  getProblems,
-  getProblemById,
-  getMyProblems,
-  updateProblem,
-  deleteProblem,
-} from "../controllers/problemController";
-
-import { authMiddleware } from "../middlewares/authMiddleware";
-import checkProblemOwner from "../middlewares/checkProblemOwner";
-
-
-
-const router = Router();
-
-// Rotas públicas
-router.get("/", getProblems);
-router.get("/:id", getProblemById);
-
-// Protegidas
-router.use(authMiddleware);
-
-// Upload de imagem + criação do problema + edição e deleção do problema
-router.post("/", upload.array("images", 5), createProblem);
-router.get("/me", getMyProblems);
-router.put("/:id", checkProblemOwner, updateProblem);
-router.delete("/:id", checkProblemOwner, deleteProblem);
-
-export default router;
- */
-
 import { Router } from "express";
 import {
   createProblem,
@@ -41,41 +7,34 @@ import {
   updateProblem,
   deleteProblem,
 } from "../controllers/problemController";
-
 import { authMiddleware } from "../middlewares/authMiddleware";
 import checkProblemOwner from "../middlewares/checkProblemOwner";
-
-import { upload } from "../config/multerConfig"; // 👈 usa o seu config
+import { upload } from "../config/multerConfig";
 
 const router = Router();
 
-// Criar problema
-router.post(
-  "/",
-  authMiddleware,
-  upload.array("images"), // 👈 POST funciona
-  createProblem
-);
+// CRIAR PROBLEM
+router.post("/", authMiddleware, upload.array("images"), createProblem);
 
-// Listar todos
+// LISTAR PROBLEMS
 router.get("/", getProblems);
 
-// Buscar por ID
+// BUSCAR POR ID
 router.get("/:id", getProblemById);
 
-// Meus problemas
+// MEUS PROBLEMS
 router.get("/me/all", authMiddleware, getMyProblems);
 
-// 🔥 Atualizar problema
+// ATUALIZA PROBLEM
 router.put(
   "/:id",
   authMiddleware,
   checkProblemOwner,
-  upload.array("images", 5), // 👈 importante! deve ser "images"
+  upload.array("images", 5),
   updateProblem
 );
 
-// 🔥 Excluir problema
+// EXCLUIR PROBLEM
 router.delete("/:id", authMiddleware, checkProblemOwner, deleteProblem);
 
 export default router;

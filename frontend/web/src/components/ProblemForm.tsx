@@ -21,11 +21,9 @@ export default function ProblemForm() {
 
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [errors, setErrors] = useState<string[]>([]); // 🔥 coletor de erros
+  const [errors, setErrors] = useState<string[]>([]);
 
-  // ================================
   // VALIDAR IMAGENS
-  // ================================
   const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
@@ -60,9 +58,7 @@ export default function ProblemForm() {
     }));
   };
 
-  // ================================
   // VALIDAR CAMPOS DO FORMULÁRIO
-  // ================================
   const validateForm = () => {
     const errorsList: string[] = [];
 
@@ -77,9 +73,7 @@ export default function ProblemForm() {
     return errorsList.length === 0;
   };
 
-  // ================================
   // SUBMIT
-  // ================================
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -120,13 +114,11 @@ export default function ProblemForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 border rounded bg-white shadow-sm"
+      className="p-4 border rounded bg-white shadow-sm mx-2 mx-md-0"
     >
-      {/* ============================ */}
-      {/* EXIBIR ERROS */}
-      {/* ============================ */}
+      {/* ERROS */}
       {errors.length > 0 && (
-        <div className="alert alert-danger">
+        <div className="alert alert-danger mb-3">
           <ul className="mb-0">
             {errors.map((err, i) => (
               <li key={i}>{err}</li>
@@ -135,15 +127,13 @@ export default function ProblemForm() {
         </div>
       )}
 
-      {/* ============================ */}
-      {/* CAMPOS DO FORMULÁRIO         */}
-      {/* ============================ */}
-
+      {/* TÍTULO */}
       <div className="mt-3">
-        <label className="form-label">Título *</label>
+        <label className="form-label mb-1">Título *</label>
         <input
           type="text"
           className="form-control"
+          placeholder="Ex: Buraco na rua"
           value={formData.title}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, title: e.target.value }))
@@ -151,20 +141,9 @@ export default function ProblemForm() {
         />
       </div>
 
+      {/* CATEGORIA */}
       <div className="mt-3">
-        <label className="form-label">Descrição (opcional)</label>
-        <textarea
-          className="form-control"
-          rows={3}
-          value={formData.description}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, description: e.target.value }))
-          }
-        ></textarea>
-      </div>
-
-      <div className="mt-3">
-        <label className="form-label">Categoria *</label>
+        <label className="form-label mb-1">Categoria *</label>
         <select
           className="form-select"
           value={formData.category}
@@ -182,7 +161,22 @@ export default function ProblemForm() {
         </select>
       </div>
 
-      <div className="mt-3 form-check">
+      {/* DESCRIÇÃO */}
+      <div className="mt-3">
+        <label className="form-label mb-1">Descrição (opcional)</label>
+        <textarea
+          className="form-control"
+          rows={3}
+          placeholder="Descreva o problema..."
+          value={formData.description}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, description: e.target.value }))
+          }
+        ></textarea>
+      </div>
+
+      {/* ANÔNIMO */}
+      <div className="mt-3 form-check d-flex align-items-center gap-2">
         <input
           type="checkbox"
           className="form-check-input"
@@ -190,26 +184,33 @@ export default function ProblemForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, anonymous: e.target.checked }))
           }
+          id="anonCheck"
         />
-        <label className="form-check-label">Denunciar anonimamente</label>
+        <label htmlFor="anonCheck" className="form-check-label">
+          Denunciar anonimamente
+        </label>
       </div>
 
+      {/* BUSCA DE ENDEREÇO */}
       <AddressSearch
         onSelectAddress={handleAddressSelected}
         externalAddress={formData.address}
       />
 
-      <LocationPickerMap
-        lat={formData.lat}
-        lng={formData.lng}
-        onChangePosition={(lat, lng, address) =>
-          handleMapMoved(lat, lng, address)
-        }
-      />
+      {/* MAPA RESPONSIVO */}
+      <div className="my-3">
+        <LocationPickerMap
+          lat={formData.lat}
+          lng={formData.lng}
+          onChangePosition={(lat, lng, address) =>
+            handleMapMoved(lat, lng, address)
+          }
+        />
+      </div>
 
-      {/* Upload de imagens */}
+      {/* IMAGENS */}
       <div className="mt-3">
-        <label className="form-label">Imagens (máx. 5)</label>
+        <label className="form-label mb-1">Imagens (máx. 5)</label>
         <input
           type="file"
           multiple
@@ -219,7 +220,7 @@ export default function ProblemForm() {
         />
       </div>
 
-      {/* previews */}
+      {/* PREVIEW */}
       {previewUrls.length > 0 && (
         <div className="mt-3 d-flex gap-2 flex-wrap">
           {previewUrls.map((src, i) => (
@@ -228,8 +229,8 @@ export default function ProblemForm() {
               src={src}
               className="rounded"
               style={{
-                width: "120px",
-                height: "120px",
+                width: "110px",
+                height: "110px",
                 objectFit: "cover",
               }}
             />
@@ -237,7 +238,7 @@ export default function ProblemForm() {
         </div>
       )}
 
-      <button className="btn btn-success w-100 mt-3" type="submit">
+      <button className="btn btn-success w-100 mt-4" type="submit">
         Enviar Problema
       </button>
     </form>

@@ -1,336 +1,10 @@
-/* "use client";
-
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { getAllProblems } from "../services/problemService";
-import ProblemCard from "../components/ProblemCard";
-
-const ProblemMap = dynamic(() => import("../components/ProblemMap"), {
-  ssr: false,
-});
-
-export default function HomePage() {
-  const [problems, setProblems] = useState([]);
-  const [categoryFilter, setCategoryFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("Todos");
-  
-
-  // 🔥 Carrega problemas ao iniciar
-  useEffect(() => {
-    async function load() {
-      const data = await getAllProblems();
-      setProblems(data);
-      console.log(data);
-    }
-
-    load();
-  }, []);
-
-  // 🔥 Filtragem dinâmica
-  const filteredProblems = problems.filter((p: any) => {
-    const matchCategory =
-      categoryFilter === "Todos" || p.category === categoryFilter;
-
-    const matchStatus = statusFilter === "Todos" || p.status === statusFilter;
-
-    return matchCategory && matchStatus;
-  });
-
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>Problemas Reportados</h2>
-
-      {/* 🔥 Filtros *}
-      <div className="row mt-3 mb-4">
-        <div className="col-md-4">
-          <label>Categoria:</label>
-          <select
-            className="form-select"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-          >
-            <option>Todos</option>
-            <option>Iluminação</option>
-            <option>Pavimentação</option>
-            <option>Segurança</option>
-            <option>Lixo</option>
-            <option>Esgoto</option>
-            <option>Outros</option>
-          </select>
-        </div>
-
-        <div className="col-md-4">
-          <label>Status:</label>
-          <select
-            className="form-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="Todos">Todos</option>
-            <option value="pendente">Pendente</option>
-            <option value="em_andamento">Em andamento</option>
-            <option value="resolvido">Resolvido</option>
-          </select>
-        </div>
-      </div>
-
-      {/* 🔥 Mapa *}
-      <ProblemMap problems={filteredProblems} />
-
-      {/* 🔥 Cards *}
-      <div className="row mt-3">
-        {filteredProblems.map((p: any) => (
-          <ProblemCard
-            key={p._id}
-            id={p._id}
-            title={p.title}
-            category={p.category}
-            address={p.address}
-            image={p.images?.[0]}
-            status={p.status}
-            anonymous={p.anonymous}
-            reportedBy={p.userId?.name}
-            createdAt={p.createdAt}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
- */
-
-/* "use client";
-
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { getAllProblems } from "../services/problemService";
-import ProblemCard from "../components/ProblemCard";
-
-const ProblemMap = dynamic(() => import("../components/ProblemMap"), {
-  ssr: false,
-});
-
-export default function HomePage() {
-  const [problems, setProblems] = useState([]);
-  const [categoryFilter, setCategoryFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("Todos");
-
-  // 🔥 ID do card/pin selecionado
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  // 🔥 Carrega problemas ao iniciar
-  useEffect(() => {
-    async function load() {
-      const data = await getAllProblems();
-      setProblems(data);
-      console.log(data);
-    }
-    load();
-  }, []);
-
-  // 🔥 Filtragem dinâmica
-  const filteredProblems = problems.filter((p: any) => {
-    const matchCategory =
-      categoryFilter === "Todos" || p.category === categoryFilter;
-
-    const matchStatus = statusFilter === "Todos" || p.status === statusFilter;
-
-    return matchCategory && matchStatus;
-  });
-
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>Problemas Reportados</h2>
-
-      {/* 🔥 Filtros *}
-      <div className="row mt-3 mb-4">
-        <div className="col-md-4">
-          <label>Categoria:</label>
-          <select
-            className="form-select"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-          >
-            <option>Todos</option>
-            <option>Iluminação</option>
-            <option>Pavimentação</option>
-            <option>Segurança</option>
-            <option>Lixo</option>
-            <option>Esgoto</option>
-            <option>Outros</option>
-          </select>
-        </div>
-
-        <div className="col-md-4">
-          <label>Status:</label>
-          <select
-            className="form-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="Todos">Todos</option>
-            <option value="pendente">Pendente</option>
-            <option value="em_andamento">Em andamento</option>
-            <option value="resolvido">Resolvido</option>
-          </select>
-        </div>
-      </div>
-
-      {/* 🔥 Mapa sincronizado *}
-      <ProblemMap
-        problems={filteredProblems}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-      />
-
-      {/* 🔥 Cards *}
-      <div className="row mt-3">
-        {filteredProblems.map((p: any) => (
-          <div
-            key={p._id}
-            className="col-md-4 mb-3"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedId(p._id)} // 🔥 destaca card e pin
-          >
-            <ProblemCard
-              id={p._id}
-              title={p.title}
-              category={p.category}
-              address={p.address}
-              image={p.images?.[0]}
-              status={p.status}
-              anonymous={p.anonymous}
-              reportedBy={p.userId?.name}
-              createdAt={p.createdAt}
-              selected={selectedId === p._id} // 🔥 card destacado
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
- */
-
-/* "use client";
-
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { getAllProblems } from "../services/problemService";
-import ProblemCard from "../components/ProblemCard";
-
-const ProblemMap = dynamic(() => import("../components/ProblemMap"), {
-  ssr: false,
-});
-
-export default function HomePage() {
-  const [problems, setProblems] = useState([]);
-  const [categoryFilter, setCategoryFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("Todos");
-
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function load() {
-      const data = await getAllProblems();
-      setProblems(data);
-    }
-    load();
-  }, []);
-
-  const filteredProblems = problems.filter((p: any) => {
-    const matchCategory =
-      categoryFilter === "Todos" || p.category === categoryFilter;
-
-    const matchStatus = statusFilter === "Todos" || p.status === statusFilter;
-
-    return matchCategory && matchStatus;
-  });
-
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>Problemas Reportados</h2>
-
-      {/* 🔥 Filtros *}
-      <div className="row mt-3 mb-4">
-        <div className="col-md-4">
-          <label>Categoria:</label>
-          <select
-            className="form-select"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-          >
-            <option>Todos</option>
-            <option>Iluminação</option>
-            <option>Pavimentação</option>
-            <option>Segurança</option>
-            <option>Lixo</option>
-            <option>Esgoto</option>
-            <option>Outros</option>
-          </select>
-        </div>
-
-        <div className="col-md-4">
-          <label>Status:</label>
-          <select
-            className="form-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="Todos">Todos</option>
-            <option value="pendente">Pendente</option>
-            <option value="em_andamento">Em andamento</option>
-            <option value="resolvido">Resolvido</option>
-          </select>
-        </div>
-      </div>
-
-      {/* 🔥 Mapa sincronizado — AGORA CORRETO *}
-      <div className="row">
-        <div className="col-12">
-          <ProblemMap
-            problems={filteredProblems}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-          />
-        </div>
-      </div>
-
-      {/* 🔥 Cards *}
-      <div className="row mt-3">
-        {filteredProblems.map((p: any) => (
-          <div
-            key={p._id}
-            className="col-md-4 mb-3"
-            onClick={() => setSelectedId(p._id)}
-            style={{ cursor: "pointer" }}
-          >
-            <ProblemCard
-              id={p._id}
-              title={p.title}
-              category={p.category}
-              address={p.address}
-              image={p.images?.[0]}
-              status={p.status}
-              anonymous={p.anonymous}
-              reportedBy={p.userId?.name}
-              createdAt={p.createdAt}
-              selected={selectedId === p._id}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-} */
-
 "use client";
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { getAllProblems, deleteProblem } from "../services/problemService";
 import ProblemCard from "../components/ProblemCard";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 
 // Mapa (sem SSR)
 const ProblemMap = dynamic(() => import("../components/ProblemMap"), {
@@ -340,7 +14,7 @@ const ProblemMap = dynamic(() => import("../components/ProblemMap"), {
 export default function HomePage() {
   const [problems, setProblems] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("pendente");
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -355,7 +29,7 @@ export default function HomePage() {
     load();
   }, []);
 
-  // 🔥 Exclusão no frontend
+  // Exclusão no frontend
   async function handleDelete(id: string) {
     if (!confirm("Tem certeza que deseja excluir este problema?")) return;
 
@@ -375,7 +49,7 @@ export default function HomePage() {
     }
   }
 
-  // 🔥 Filtragem — com useMemo para estabilidade
+  // Filtragem — com useMemo para estabilidade
   const filteredProblems = useMemo(() => {
     return problems.filter((p: any) => {
       const categoryOk =
@@ -395,15 +69,13 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="px-3 px-md-4 py-3">
       <h2>Problemas Reportados</h2>
 
-      {/* =======================================================
-           🔥 Filtros
-         ======================================================= */}
+      {/*Filtros*/}
       <div className="row mt-3 mb-4">
-        <div className="col-md-4">
-          <label className="fw-bold">Categoria:</label>
+        <div className="col-12 col-md-4 mb-3 mb-md-0">
+          <label className="fw-bold mb-1">Categoria:</label>
           <select
             className="form-select"
             value={categoryFilter}
@@ -419,8 +91,8 @@ export default function HomePage() {
           </select>
         </div>
 
-        <div className="col-md-4">
-          <label className="fw-bold">Status:</label>
+        <div className="col-12 col-md-4 mb-3 mb-md-0">
+          <label className="fw-bold mb-1">Status:</label>
           <select
             className="form-select"
             value={statusFilter}
@@ -434,12 +106,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* =======================================================
-          🔥 Mapa com seleção sincronizada
-         ======================================================= */}
+      {/*Mapa*/}
       <div className="row">
         <div className="col-12">
-          <div key="map-wrapper">
+          <div key="map-wrapper" className="w-100">
             <ProblemMap
               problems={filteredProblems}
               selectedProblemId={selectedId}
@@ -449,20 +119,19 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* =======================================================
-          🔥 Cards de problemas
-         ======================================================= */}
+      {/*Cards*/}
       <div className="row mt-3">
         {filteredProblems.map((p: any) => (
           <div
             key={p._id}
-            className="col-md-4 mb-3"
+            className="col-12 col-sm-6 col-lg-4 mb-3"
             onClick={() => setSelectedId(p._id)}
             style={{ cursor: "pointer" }}
           >
             <ProblemCard
               id={p._id}
               title={p.title}
+              description={p.description}
               category={p.category}
               address={p.address}
               image={p.images?.[0]}
@@ -471,8 +140,8 @@ export default function HomePage() {
               reportedBy={p.userId?.name}
               createdAt={p.createdAt}
               selected={selectedId === p._id}
-              isOwner={isOwner(p)} // 🌟 aparece só para o dono
-              onDelete={handleDelete} // 🔥 funcionamento correto
+              isOwner={isOwner(p)}
+              onDelete={handleDelete}
             />
           </div>
         ))}

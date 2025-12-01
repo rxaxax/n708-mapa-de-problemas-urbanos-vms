@@ -21,12 +21,10 @@ export function authMiddleware(req, res, next) {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Conteúdo padrão armazenado no req.user
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      name: decoded.name,  // se for útil no futuro
-      role: decoded.role,  // se você expandir o sistema
+      role: decoded.role,
       iat: decoded.iat,
       exp: decoded.exp,
     };

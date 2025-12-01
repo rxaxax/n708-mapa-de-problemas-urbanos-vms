@@ -5,12 +5,14 @@ import axios from "axios";
 
 interface Props {
   onSelectAddress: (lat: number, lng: number, address: string) => void;
-  externalAddress?: string; // <--- novo
+  externalAddress?: string;
+  label?: string;
 }
 
 export default function AddressSearch({
   onSelectAddress,
   externalAddress,
+  label,
 }: Props) {
   const [input, setInput] = useState("");
 
@@ -75,10 +77,10 @@ export default function AddressSearch({
       const lat = parseFloat(result.lat);
       const lon = parseFloat(result.lon);
 
-      // 🔍 tenta extrair número do input
+      // tenta extrair número do input
       const userNumber = extractNumFromInput(input);
 
-      // 🔍 tenta capturar o número de várias fontes
+      // tenta capturar o número de várias fontes
       const number =
         result.address.house_number ||
         userNumber ||
@@ -100,18 +102,19 @@ export default function AddressSearch({
 
   return (
     <div className="mb-3">
-      <label className="form-label">Endereço *</label>
+      {label || <label className="form-label mb-1">Endereço *</label>}
 
-      <div className="input-group">
+      <div className="input-group flex-column flex-sm-row">
         <input
           type="text"
-          className="form-control"
+          className="form-control mb-2 mb-sm-0"
           placeholder="Digite um endereço..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
+
         <button
-          className="btn btn-primary"
+          className="btn btn-primary w-100 w-sm-auto"
           type="button"
           onClick={handleSearch}
         >

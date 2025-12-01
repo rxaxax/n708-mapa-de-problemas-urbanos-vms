@@ -1,26 +1,7 @@
-/* "use client";
-
-import dynamic from "next/dynamic";
-
-
-const ProblemForm = dynamic(() => import("../../components/ProblemForm"), {
-  ssr: false,
-});
-
-export default function ReportarProblemaPage() {
-  return (
-    <div className="container my-4">
-      <h2 className="mb-3">Reportar problema urbano</h2>
-      <ProblemForm />
-    </div>
-  );
-}
- */
-
 "use client";
 
 import dynamic from "next/dynamic";
-import { useAuthContext } from "../../context/authContext";
+import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -29,10 +10,10 @@ const ProblemForm = dynamic(() => import("../../components/ProblemForm"), {
 });
 
 export default function ReportarProblemaPage() {
-  const { user, loading } = useAuthContext();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
-  // 🛡 Proteção da rota
+  // Proteção da rota
   useEffect(() => {
     if (!loading && !user) {
       router.replace("/login");
@@ -44,13 +25,16 @@ export default function ReportarProblemaPage() {
   }
 
   if (!user) {
-    return null; // ❗ evita conteúdo piscar
+    return null;
   }
 
   return (
-    <div className="container my-4">
-      <h2 className="mb-3">Reportar problema urbano</h2>
-      <ProblemForm />
+    <div className="container my-4 px-3 px-md-0">
+      <h2 className="mb-4">Reportar problema urbano</h2>
+
+      <div className="card p-4 shadow-sm mx-2 mx-md-0">
+        <ProblemForm />
+      </div>
     </div>
   );
 }

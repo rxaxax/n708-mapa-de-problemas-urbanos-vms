@@ -7,6 +7,13 @@ import {
   updateProblem,
   deleteProblem,
 } from "../../../services/problemService";
+import AddressSearch from "../../../components/AddressSearch";
+import dynamic from "next/dynamic";
+
+const LocationPickerMap = dynamic(
+  () => import("../../../components/LocationPickerMap"),
+  { ssr: false }
+);
 
 const CATEGORIES = [
   "Iluminação",
@@ -127,14 +134,34 @@ export default function EditPage({ params }) {
     router.push("/");
   }
 
+  // Seleção vinda do AddressSearch
+  function handleAddressSelected(lat: number, lng: number, address: string) {
+    setProblem((prev) => ({
+      ...prev,
+      lat,
+      lng,
+      address,
+    }));
+  }
+
+  // Movimento do pin no mapa
+  function handleMapMoved(lat: number, lng: number, address: string) {
+    setProblem((prev) => ({
+      ...prev,
+      lat,
+      lng,
+      address: address || prev.address,
+    }));
+  }
+
   return (
     <div className="container my-4">
       <h2 className="mb-4">Editar Problema</h2>
 
-      <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+      <form onSubmit={handleSubmit} className="card p-4 shadow-sm mx-2">
         {/* Título */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Título</label>
+          <label className="form-label fw-bold mb-1">Título</label>
           <input
             type="text"
             className="form-control"
@@ -146,7 +173,7 @@ export default function EditPage({ params }) {
 
         {/* Descrição */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Descrição</label>
+          <label className="form-label fw-bold mb-1">Descrição</label>
           <textarea
             className="form-control"
             rows={3}
@@ -157,7 +184,7 @@ export default function EditPage({ params }) {
 
         {/* Categoria */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Categoria</label>
+          <label className="form-label fw-bold mb-1">Categoria</label>
           <select
             className="form-select"
             value={problem.category}
@@ -170,45 +197,28 @@ export default function EditPage({ params }) {
         </div>
 
         {/* Endereço */}
-        <div className="mb-3">
-          <label className="form-label fw-bold">Endereço</label>
-          <input
-            className="form-control"
-            value={problem.address}
-            onChange={(e) => updateField("address", e.target.value)}
-            required
-          />
-        </div>
+        <AddressSearch
+          onSelectAddress={handleAddressSelected}
+          externalAddress={problem.address}
+          label={
+            <label className="form-label fw-bold mb-1">Novo endereço</label>
+          }
+        />
 
-        {/* Latitude/Longitude */}
-        <div className="row mb-3">
-          <div className="col-md-6">
-            <label className="form-label fw-bold">Latitude</label>
-            <input
-              type="number"
-              className="form-control"
-              step="any"
-              value={problem.lat}
-              onChange={(e) => updateField("lat", Number(e.target.value))}
-              required
-            />
-          </div>
-          <div className="col-md-6">
-            <label className="form-label fw-bold">Longitude</label>
-            <input
-              type="number"
-              className="form-control"
-              step="any"
-              value={problem.lng}
-              onChange={(e) => updateField("lng", Number(e.target.value))}
-              required
-            />
-          </div>
+        {/* Mapa */}
+        <div className="my-3 w-100">
+          <LocationPickerMap
+            lat={problem.lat}
+            lng={problem.lng}
+            onChangePosition={(lat, lng, address) =>
+              handleMapMoved(lat, lng, address)
+            }
+          />
         </div>
 
         {/* Status */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Status</label>
+          <label className="form-label fw-bold mb-1">Status</label>
           <select
             className="form-select"
             value={problem.status}
@@ -234,15 +244,16 @@ export default function EditPage({ params }) {
           </label>
         </div>
 
-        {/* EXISTING IMAGES */}
+        {/* Imagens atuais */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Imagens atuais</label>
+          <label className="form-label fw-bold mb-2">Imagens atuais</label>
 
           <div className="d-flex flex-wrap gap-2">
             {problem.images.map((img: string, i: number) => (
               <div key={i} className="position-relative">
                 <img
                   src={img}
+                  className="edit-img"
                   style={{
                     width: "120px",
                     height: "90px",
@@ -251,6 +262,7 @@ export default function EditPage({ params }) {
                     border: "2px solid #ccc",
                   }}
                 />
+
                 <button
                   type="button"
                   className="btn btn-sm btn-danger position-absolute top-0 end-0"
@@ -263,9 +275,11 @@ export default function EditPage({ params }) {
           </div>
         </div>
 
-        {/* ADD NEW IMAGES */}
+        {/* Novas imagens */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Adicionar novas imagens</label>
+          <label className="form-label fw-bold mb-1">
+            Adicionar novas imagens
+          </label>
           <input
             type="file"
             className="form-control"
@@ -275,7 +289,7 @@ export default function EditPage({ params }) {
           />
         </div>
 
-        {/* PREVIEW IMAGENS NOVAS */}
+        {/* Preview de novas imagens */}
         {newImages.length > 0 && (
           <div className="mb-3">
             <p className="fw-bold mb-2">Pré-visualização</p>
@@ -285,6 +299,7 @@ export default function EditPage({ params }) {
                 <div key={i} className="position-relative">
                   <img
                     src={URL.createObjectURL(file)}
+                    className="edit-img"
                     style={{
                       width: "120px",
                       height: "90px",
@@ -307,23 +322,23 @@ export default function EditPage({ params }) {
           </div>
         )}
 
-        {/* BUTTONS */}
-        <div className="d-flex justify-content-between mt-4">
+        {/* Botões */}
+        <div className="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary w-100 w-md-auto"
             type="button"
             onClick={() => router.push("/")}
           >
             Cancelar
           </button>
 
-          <div className="d-flex gap-2">
-            <button className="btn btn-primary" type="submit">
+          <div className="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
+            <button className="btn btn-primary w-100 w-md-auto" type="submit">
               Salvar Alterações
             </button>
 
             <button
-              className="btn btn-danger"
+              className="btn btn-danger w-100 w-md-auto"
               type="button"
               onClick={handleDelete}
             >

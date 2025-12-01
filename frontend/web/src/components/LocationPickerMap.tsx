@@ -1,13 +1,22 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Polygon, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Polygon,
+  useMapEvents,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
 import axios from "axios";
 import * as turf from "@turf/turf";
+import { useEffect } from "react";
 import { MANOEL_SATIRO_POLYGON } from "../data/manoelSatiroPolygon";
 
 const pinIcon = new L.Icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
@@ -18,24 +27,36 @@ interface Props {
   onChangePosition: (lat: number, lng: number, address: string) => void;
 }
 
+function ResizeHandler() {
+  const map = useMap();
+
+  useEffect(() => {
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
+  }, [map]);
+
+  return null;
+}
+
 export default function LocationPickerMap({ lat, lng, onChangePosition }: Props) {
-  // 🔵 Converte polígono para Leaflet
+  // Converte polígono para Leaflet
   const polygonCoords = MANOEL_SATIRO_POLYGON.geometry.coordinates[0].map(
     (pair: number[]) => [pair[1], pair[0]]
   );
 
-  // 🎯 Centro oficial do bairro via Turf
+  // Centro oficial do bairro via Turf
   const centerPoint = turf.center(MANOEL_SATIRO_POLYGON);
   const [centerLng, centerLat] = centerPoint.geometry.coordinates;
 
   function MapEvents() {
-    const map = useMapEvents({
+    useMapEvents({
       click: async (e) => {
         const { lat, lng } = e.latlng;
 
         const point = turf.point([lng, lat]);
         const polygon = turf.polygon([
-          MANOEL_SATIRO_POLYGON.geometry.coordinates[0]
+          MANOEL_SATIRO_POLYGON.geometry.coordinates[0],
         ]);
 
         const inside = turf.booleanPointInPolygon(point, polygon);
@@ -50,7 +71,7 @@ export default function LocationPickerMap({ lat, lng, onChangePosition }: Props)
         try {
           const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
           const res = await axios.get(url);
-          const { road, house_number } = res.data.address;
+          const { road, house_number } = res.data.address || {};
           address = `${road ?? ""}${house_number ? ", " + house_number : ""}`;
         } catch {}
 
@@ -62,25 +83,31 @@ export default function LocationPickerMap({ lat, lng, onChangePosition }: Props)
   }
 
   return (
-    <MapContainer
-      center={[centerLat, centerLng]} // 🔥 Mapa inicia centralizado no bairro
-      zoom={15}
-      style={{ height: "350px", width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="© OpenStreetMap"
-      />
+    <div className="map-container rounded overflow-hidden">
+      <MapContainer
+        center={[centerLat, centerLng]}
+        zoom={15}
+        className="w-100 h-100"
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap"
+        />
 
-      {/* 🔵 Polígono oficial do bairro */}
-      <Polygon positions={polygonCoords} pathOptions={{ color: "blue", weight: 2 }} />
+        {/* Polígono oficial */}
+        <Polygon
+          positions={polygonCoords}
+          pathOptions={{ color: "blue", weight: 2 }}
+        />
 
-      {/* 📍 Exibe o marcador SOMENTE se o usuário selecionou um endereço */}
-      {lat !== null && lng !== null && (
-        <Marker position={[lat, lng]} icon={pinIcon} />
-      )}
+        {/* Marcador */}
+        {lat !== null && lng !== null && (
+          <Marker position={[lat, lng]} icon={pinIcon} />
+        )}
 
-      <MapEvents />
-    </MapContainer>
+        <MapEvents />
+        <ResizeHandler />
+      </MapContainer>
+    </div>
   );
 }

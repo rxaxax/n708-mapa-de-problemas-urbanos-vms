@@ -21,14 +21,14 @@ export async function createProblem(data: any) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/problems`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`, // 🔥 NÃO DEFINA Content-Type
+        Authorization: `Bearer ${token}`,
       },
       body: form,
     });
 
     if (!res.ok) {
       const txt = await res.text();
-      console.log("🔥 Resposta do backend:", txt);
+      console.log("Resposta do backend:", txt);
       throw new Error("Erro ao enviar problema");
     }
 

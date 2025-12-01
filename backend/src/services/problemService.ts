@@ -1,38 +1,35 @@
 import mongoose from "mongoose";
 import Problem from "../models/problemModel";
 
-// Criar problema
+// CRIAR PROBLEM
 export async function createProblemService(data) {
   return await Problem.create(data);
 }
 
-// Buscar todos os problemas (com populate)
+// BUSCAR TODOS OS PROBLEMS
 export async function getProblemsService(userId = null) {
   const filter = userId ? { userId } : {};
 
   return await Problem.find(filter)
     .sort({ createdAt: -1 })
-    .populate("userId", "name email") // traz somente nome e email
+    .populate("userId", "name email role") 
     .lean();
 }
 
-// Buscar problema por ID
+// BUSCAR PROBLEM POR ID
 export async function getProblemByIdService(id) {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
 
-  return await Problem.findById(id)
-    .populate("userId", "name email")
-    .lean();
+  return await Problem.findById(id).populate("userId", "name email").lean();
 }
 
-// Buscar problemas do usuário logado
+// BUSCAR PROBLEM DO USUARIO LOGADO
 export async function getMyProblemsService(userId) {
   return await Problem.find({ userId })
     .sort({ createdAt: -1 })
     .populate("userId", "name email")
     .lean();
 }
-
 
 export async function updateProblemService(id, data) {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
@@ -43,4 +40,3 @@ export async function deleteProblemService(id) {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return await Problem.findByIdAndDelete(id);
 }
-

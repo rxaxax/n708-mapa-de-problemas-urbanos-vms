@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { loginUser } from "../../services/authService";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "../../context/authContext";
+import { useAuth } from "../../context/AuthContext";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuthContext();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,17 +35,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <div className="card shadow p-4" style={{ maxWidth: "450px", width: "100%" }}>
+    <div className="container d-flex justify-content-center align-items-center py-5">
+      <div
+        className="card shadow p-4 mx-3"
+        style={{ maxWidth: "450px", width: "100%" }}
+      >
         <h2 className="text-center mb-4">Login</h2>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="alert alert-danger py-2">{error}</div>}
 
         <form onSubmit={handleSubmit}>
+          {/* Email */}
           <div className="mb-3">
-            <label>Email</label>
+            <label className="form-label mb-1">Email</label>
             <input
               type="email"
+              inputMode="email"
+              autoComplete="email"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -52,10 +59,12 @@ export default function LoginPage() {
             />
           </div>
 
+          {/* Senha */}
           <div className="mb-3">
-            <label>Senha</label>
+            <label className="form-label mb-1">Senha</label>
             <input
               type="password"
+              autoComplete="current-password"
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -63,10 +72,10 @@ export default function LoginPage() {
             />
           </div>
 
-          <button className="btn btn-primary w-100">Entrar</button>
+          <button className="btn btn-primary w-100 mt-2">Entrar</button>
 
           <p className="text-center mt-3">
-            Não tem conta? <a href="/register">Cadastre-se</a>
+            Não tem conta? <Link href="/register">Cadastre-se</Link>
           </p>
         </form>
       </div>

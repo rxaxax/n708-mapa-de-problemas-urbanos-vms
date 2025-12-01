@@ -1,64 +1,10 @@
-/* "use client";
-
-import { createContext, useContext, useEffect, useState } from "react";
-
-interface AuthContextType {
-  user: any;
-  isLogged: boolean;
-  login: (data: { token: string; user: any }) => void;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<any>(null);
-  const [isLogged, setIsLogged] = useState(false);
-
-  // Carregar user/token ao abrir o app
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-      setIsLogged(true);
-    }
-  }, []);
-
-  function login(data: { token: string; user: any }) {
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    setUser(data.user);
-    setIsLogged(true);
-  }
-
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setIsLogged(false);
-  }
-
-  return (
-    <AuthContext.Provider value={{ user, isLogged, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuthContext() {
-  return useContext(AuthContext)!;
-}
- */
-
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   user: any;
+  role: string | null;
   loading: boolean;
   isLogged: boolean;
   login: (data: { token: string; user: any }) => void;
@@ -69,9 +15,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: any) {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true); // ⬅ fundamental
+  const [loading, setLoading] = useState(true);
 
-  // Carrega credenciais no primeiro render
+  // Carrega login salvo ao abrir o app
   useEffect(() => {
     const token = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
@@ -84,17 +30,17 @@ export function AuthProvider({ children }: any) {
       }
     }
 
-    setLoading(false); // ⬅ termina o carregamento
+    setLoading(false);
   }, []);
 
-  // login
+  // Login
   function login(data: { token: string; user: any }) {
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
     setUser(data.user);
   }
 
-  // logout
+  // Logout — re-render imediato global
   function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -105,8 +51,9 @@ export function AuthProvider({ children }: any) {
     <AuthContext.Provider
       value={{
         user,
+        role: user?.role || null,
         loading,
-        isLogged: !!user, // ⬅ automaticamente
+        isLogged: !!user,
         login,
         logout,
       }}
@@ -116,6 +63,10 @@ export function AuthProvider({ children }: any) {
   );
 }
 
-export function useAuthContext() {
-  return useContext(AuthContext)!;
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth deve ser usado dentro de <AuthProvider>");
+  }
+  return ctx;
 }

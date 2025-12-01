@@ -9,8 +9,7 @@ export async function register(req: Request, res: Response) {
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ error: "E-mail já cadastrado" });
 
-    // ❗ NÃO HASHAR AQUI — o model já faz isso automaticamente
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password, role: "user" });
 
     res.status(201).json({
       message: "Usuário registrado",
@@ -18,8 +17,13 @@ export async function register(req: Request, res: Response) {
         _id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
-      token: generateToken(user.id, user.email),
+      token: generateToken({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      }),
     });
   } catch (error) {
     console.error(error);
@@ -31,7 +35,6 @@ export async function login(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
 
-    // ⬇ NECESSÁRIO POR CAUSA DO select:false
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
@@ -46,11 +49,50 @@ export async function login(req: Request, res: Response) {
         _id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
-      token: generateToken(user.id, user.email),
+      token: generateToken({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      }),
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao fazer login" });
+  }
+}
+
+export async function updateUserRole(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!["user", "admin"].includes(role)) {
+      return res.status(400).json({ error: "Role inválido" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    return res.json({
+      message: "Role atualizado com sucesso",
+      user: {
+        _id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao atualizar role" });
   }
 }

@@ -1,222 +1,89 @@
-/* "use client";
-
-import { useEffect, useState } from "react";
-import Link from "next/link";
-
-export default function Navbar() {
-  const [isLogged, setIsLogged] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLogged(!!token);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsLogged(false);
-    window.location.href = "/login"; // redireciona
-  };
-
-  return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-      <Link className="navbar-brand fw-bold" href="/">
-        Mapa Urbano
-      </Link>
-
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarContent"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-
-      <div id="navbarContent" className="collapse navbar-collapse">
-        <ul className="navbar-nav ms-auto">
-
-          {/* --- Se NÃO estiver logado --- *}
-          {!isLogged && (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" href="/login">Entrar</Link>
-              </li>
-
-              <li className="nav-item">
-                <Link className="nav-link" href="/register">Cadastrar</Link>
-              </li>
-            </>
-          )}
-
-          {/* --- Se estiver logado --- *}
-          {isLogged && (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" href="/reportar_problema">
-                  Reportar Problema
-                </Link>
-              </li>
-
-              <li className="nav-item">
-                <button
-                  className="btn btn-light btn-sm ms-2"
-                  onClick={handleLogout}
-                >
-                  Sair
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </nav>
-  );
-}
- */
-
-/* "use client";
-
-import Link from "next/link";
-import { useAuthContext } from "../context/authContext";
-
-export default function Navbar() {
-  const { isLogged, logout } = useAuthContext();
-
-  return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-      <Link className="navbar-brand fw-bold" href="/">
-        Mapa Urbano
-      </Link>
-
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarContent"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-
-      <div id="navbarContent" className="collapse navbar-collapse">
-        <ul className="navbar-nav ms-auto">
-
-          {!isLogged && (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" href="/login">Entrar</Link>
-              </li>
-
-              <li className="nav-item">
-                <Link className="nav-link" href="/register">Cadastrar</Link>
-              </li>
-            </>
-          )}
-
-          {isLogged && (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" href="/reportar_problema">
-                  Reportar Problema
-                </Link>
-              </li>
-
-              <li className="nav-item">
-                <button
-                  className="btn btn-light btn-sm ms-2"
-                  onClick={logout}
-                >
-                  Sair
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </nav>
-  );
-}
- */
-
 "use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "../context/authContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
-  const { isLogged, loading, logout } = useAuthContext();
+  const { isLogged, loading, logout } = useAuth();
   const router = useRouter();
 
-  // ⛔ enquanto carrega o estado do login, não renderiza nada
   if (loading) {
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-        <span className="navbar-brand fw-bold">Mapa Urbano</span>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div className="container-fluid px-3">
+          <span className="navbar-brand fw-bold">Mapa Urbano</span>
+        </div>
       </nav>
     );
   }
 
   function handleLogout() {
     logout();
-    router.push("/login"); // redireciona imediatamente
+    router.push("/");
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-      <Link className="navbar-brand fw-bold" href="/">
-        Mapa Urbano
-      </Link>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div className="container-fluid px-3">
 
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarContent"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
+        <Link className="navbar-brand fw-bold" href="/">
+          Mapa Urbano
+        </Link>
 
-      <div id="navbarContent" className="collapse navbar-collapse">
-        <ul className="navbar-nav ms-auto">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarContent"
+          aria-controls="navbarContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-          {/* ------------------------ */}
-          {/* Usuário NÃO autenticado */}
-          {/* ------------------------ */}
-          {!isLogged && (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" href="/login">Entrar</Link>
-              </li>
+        <div id="navbarContent" className="collapse navbar-collapse">
+          <ul className="navbar-nav ms-auto">
 
-              <li className="nav-item">
-                <Link className="nav-link" href="/register">Cadastrar</Link>
-              </li>
-            </>
-          )}
+            {!isLogged && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" href="/login">
+                    Entrar
+                  </Link>
+                </li>
 
-          {/* ------------------------ */}
-          {/* Usuário autenticado      */}
-          {/* ------------------------ */}
-          {isLogged && (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" href="/reportar_problema">
-                  Reportar Problema
-                </Link>
-              </li>
+                <li className="nav-item">
+                  <Link className="nav-link" href="/register">
+                    Cadastrar
+                  </Link>
+                </li>
+              </>
+            )}
 
-              <li className="nav-item">
-                <button
-                  className="btn btn-light btn-sm ms-2"
-                  onClick={handleLogout}
-                >
-                  Sair
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
+            {isLogged && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" href="/reportar_problema">
+                    Reportar Problema
+                  </Link>
+                </li>
+
+                {/* Botão sair: agora responsivo */}
+                <li className="nav-item d-flex align-items-center">
+                  <button
+                    className="btn btn-light btn-sm w-100 mt-2 mt-lg-0"
+                    onClick={handleLogout}
+                  >
+                    Sair
+                  </button>
+                </li>
+              </>
+            )}
+
+          </ul>
+        </div>
       </div>
     </nav>
   );

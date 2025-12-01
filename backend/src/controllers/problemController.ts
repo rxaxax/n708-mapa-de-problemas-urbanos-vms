@@ -8,14 +8,13 @@ import {
 } from "../services/problemService";
 
 import dotenv from "dotenv";
+import { sanitizeProblemForResponse } from "../utils/sanitizeProblem";
 
 dotenv.config();
 
-// 🔥 BASE_URL dinâmica
 const BASE_URL =
   `http://localhost:${process.env.PORT}` || "http://localhost:3001";
 
-// Categorias permitidas (mantém sincronizado com o model)
 const CATEGORIES = [
   "Iluminação",
   "Pavimentação",
@@ -25,7 +24,7 @@ const CATEGORIES = [
   "Outros",
 ];
 
-// Função auxiliar → transforma nomes em URLs completas
+// TRANSFORMA NOMES EM URLS COMPLETAS
 function formatImageUrls(problem) {
   return {
     ...problem,
@@ -38,19 +37,18 @@ export async function createProblem(req, res) {
     const { title, description, category, anonymous, address, lat, lng } =
       req.body;
 
-    // 🔥 Validação básica
     if (!title || !address || !lat || !lng) {
       return res
         .status(400)
         .json({ error: "Campos obrigatórios não preenchidos." });
     }
 
-    // 🔥 Valida categoria
+    // VALIDA CATEGORIA
     if (category && !CATEGORIES.includes(category)) {
       return res.status(400).json({ error: "Categoria inválida." });
     }
 
-    // 🔥 Processa imagens do Multer
+    // PROCESSA IMAGENS DO MULTER
     let processedImages = [];
 
     if (req.files && Array.isArray(req.files)) {
@@ -59,7 +57,7 @@ export async function createProblem(req, res) {
       processedImages = [req.file.filename];
     }
 
-    // 🔥 Cria o problema
+    // CRIA O PROBLEM
     const newProblem = await createProblemService({
       title,
       description,
@@ -72,14 +70,14 @@ export async function createProblem(req, res) {
       userId: req.user.id,
     });
 
-    // 🔥 Remove informações sensíveis, mas mantém o ID
+    // Remove informações sensíveis, mas mantém o ID
     let result = newProblem.toObject();
 
     if (anonymous && result.userId) {
       result.userId = { name: "Anônimo" };
     }
 
-    // 🔥 Adiciona URLs completas
+    // Adiciona URLs completas
     result = formatImageUrls(result);
 
     return res.status(201).json(result);
@@ -93,7 +91,9 @@ export async function getProblems(req, res) {
   try {
     const problems = await getProblemsService();
 
-    const formatted = problems.map((p) => formatImageUrls(p)); // sem .toObject()
+    const formatted = problems.map((p) =>
+      formatImageUrls(sanitizeProblemForResponse(p))
+    );
 
     return res.json(formatted);
   } catch (error) {
@@ -110,7 +110,8 @@ export async function getProblemById(req, res) {
       return res.status(404).json({ error: "Problema não encontrado." });
     }
 
-    return res.json(formatImageUrls(problem)); // <- sem toObject()
+    const sanitized = sanitizeProblemForResponse(problem);
+    return res.json(formatImageUrls(sanitized));
   } catch (error) {
     console.error("Erro ao buscar problema:", error);
     return res.status(500).json({ error: "Erro ao buscar problema." });
@@ -123,7 +124,7 @@ export async function getMyProblems(req, res) {
 
     const problems = await getMyProblemsService(userId);
 
-    const formatted = problems.map((p) => formatImageUrls(p)); // <- sem toObject()
+    const formatted = problems.map((p) => formatImageUrls(p));
 
     return res.json(formatted);
   } catch (error) {
@@ -133,16 +134,6 @@ export async function getMyProblems(req, res) {
     });
   }
 }
-
-/* export const updateProblem = async (req, res) => {
-  try {
-    const updated = await updateProblemService(req.params.id, req.body);
-    return res.json(updated);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Erro ao atualizar problema." });
-  }
-}; */
 
 export const updateProblem = async (req, res) => {
   try {
@@ -157,29 +148,27 @@ export const updateProblem = async (req, res) => {
       anonymous,
     } = req.body;
 
-    // 1. RECEBER IMAGENS EXISTENTES
+    // RECEBE IMAGENS EXISTENTES
     let existingImages = req.body.existingImages || [];
 
-    // multer envia como string única caso só tenha 1
     if (typeof existingImages === "string") {
       existingImages = [existingImages];
     }
 
-    // 2. RECEBER NOVAS IMAGENS (files)
+    // RECEBE NOVAS IMAGENS
     let newImages = [];
     if (req.files && Array.isArray(req.files)) {
       newImages = req.files.map((f) => f.filename);
     }
 
-    // 3. EVITAR DUPLICAÇÃO REALMENTE
-    // remove duplicações usadas no frontend
+    // EVITAR DUPLICAÇÃO DE ARQUIVOS
     const finalImages = Array.from(new Set([...existingImages, ...newImages]));
 
-    // 4. LIMITAR A 5 IMAGENS
+    // LIMITAR A 5 IMAGENS
     if (finalImages.length > 5) {
       return res.status(400).json({ error: "Máximo de 5 imagens permitidas." });
     }
-    // 5. ATUALIZAR REGISTRO
+    // ATUALIZAR REGISTRO
     const updated = await updateProblemService(req.params.id, {
       title,
       description,
