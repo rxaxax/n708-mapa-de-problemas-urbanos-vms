@@ -1,4 +1,4 @@
-import { API_URL } from "../config/api";
+import api from "./api";
 
 export type ProblemDTO = {
   _id: string;
@@ -13,88 +13,65 @@ export type ProblemDTO = {
   userId?: { _id: string; name: string };
 };
 
-// GET ALL
+// GET ALL PROBLEMS
 export async function getAllProblems(): Promise<ProblemDTO[]> {
   try {
-    const res = await fetch(`${API_URL}/problems`, {
-      method: "GET",
+    const { data } = await api.get("/problems", {
       headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          typeof window !== "undefined"
-            ? `Bearer ${localStorage.getItem("token")}`
-            : "",
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
       },
-      cache: "no-store",
     });
 
-    if (!res.ok) return [];
-
-    return await res.json();
+    return data ?? [];
   } catch (error) {
     console.error("Erro no getAllProblems:", error);
     return [];
   }
 }
 
-// GET BY ID
-export async function getProblemById(id: string): Promise<ProblemDTO | null> {
+// GET PROBLEM BY ID
+export async function getProblemById(
+  id: string
+): Promise<ProblemDTO | null> {
   try {
-    const res = await fetch(`${API_URL}/problems/${id}`, {
+    const { data } = await api.get(`/problems/${id}`, {
       headers: {
-        Authorization:
-          typeof window !== "undefined"
-            ? `Bearer ${localStorage.getItem("token")}`
-            : "",
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
       },
-      cache: "no-store",
     });
 
-    if (!res.ok) {
-      console.error("Erro ao buscar problema:", res.status);
-      return null;
-    }
-
-    return await res.json();
+    return data ?? null;
   } catch (error) {
     console.error("Erro no getProblemById:", error);
     return null;
   }
 }
 
-// UPDATE (PUT)
-export async function updateProblem(id: string, data: FormData) {
-  const res = await fetch(`${API_URL}/problems/${id}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body: data,
-  });
-
-  if (!res.ok) {
-    throw new Error("Erro ao atualizar problema");
-  }
-
-  return await res.json();
-}
-
-// DELETE
-export async function deleteProblem(id: string) {
+// UPDATE PROBLEM (PUT)
+export async function updateProblem(id: string, form: FormData) {
   try {
-    const res = await fetch(`${API_URL}/problems/${id}`, {
-      method: "DELETE",
+    const { data } = await api.put(`/problems/${id}`, form, {
       headers: {
-        Authorization:
-          typeof window !== "undefined"
-            ? `Bearer ${localStorage.getItem("token")}`
-            : "",
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "multipart/form-data",
       },
     });
 
-    if (!res.ok) {
-      throw new Error("Erro ao excluir problema");
-    }
+    return data;
+  } catch (error) {
+    console.error("Erro ao atualizar problema:", error);
+    throw error;
+  }
+}
+
+// DELETE PROBLEM
+export async function deleteProblem(id: string) {
+  try {
+    await api.delete(`/problems/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    });
 
     return true;
   } catch (error) {
