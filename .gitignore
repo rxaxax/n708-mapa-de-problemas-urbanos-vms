@@ -100,6 +100,14 @@ uploads/
 *.jpeg
 *.gif
 
+# EXCEÇÃO: permitir imagens dentro de imgs_para_docs/
+!imgs_para_docs/
+!imgs_para_docs/*.png
+!imgs_para_docs/*.jpg
+!imgs_para_docs/*.jpeg
+!imgs_para_docs/*.gif
+
+
 # Se quiser armazenar imagens do projeto, remova essa parte
 # Ou crie uma pasta separada como /public/assets
 

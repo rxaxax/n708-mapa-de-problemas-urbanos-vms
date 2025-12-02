@@ -1,0 +1,1 @@
+O projeto utilizou banco de dados **NoSQL (MongoDB)** conforme documentação (`../docs`).
