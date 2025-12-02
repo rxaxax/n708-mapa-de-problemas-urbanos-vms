@@ -1,0 +1,5 @@
+Durante o processo de validação do sistema _Mapa de Problemas Urbanos — Vila Manoel Sátiro_, o usuário testou as principais funcionalidades previstas nos requisitos e confirmou que todas elas estão funcionando conforme o esperado. As operações de cadastro e login, registro de problemas urbanos com envio de imagem, listagem e visualização de ocorrências foram validadas com sucesso, demonstrando estabilidade e aderência aos objetivos do projeto.
+
+Além disso, o usuário destacou que a aplicação cumpre bem sua proposta de facilitar o registro e acompanhamento de problemas na comunidade. Durante a utilização, foram identificados alguns pontos de melhoria voltados à experiência do usuário, especialmente relacionados à fluidez da navegação, clareza de feedback em ações específicas e otimização do fluxo de envio de informações.
+
+De modo geral, o sistema foi considerado funcional e alinhado às expectativas, com sugestões valiosas para aprimorar a usabilidade nas próximas versões.

@@ -103,9 +103,15 @@ uploads/
 # EXCEÇÃO: permitir imagens dentro de imgs_para_docs/
 !imgs_para_docs/
 !imgs_para_docs/*.png
-!imgs_para_docs/*.jpg
-!imgs_para_docs/*.jpeg
-!imgs_para_docs/*.gif
+
+# EXCEÇÃO: permitir imagens dentro de validation/evidence/
+!validation/evidence/
+!validation/evidence/*.png
+
+# EXCEÇÃO: permitir imagens dentro de validation/feedback/
+!validation/feedback/
+!validation/feedback/*.png
+
 
 
 # Se quiser armazenar imagens do projeto, remova essa parte

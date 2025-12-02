@@ -1,0 +1,3 @@
+O projeto foi pensado inicialmente para atender a população da Vila Manoel Sátiro, incluindo moradores, a associação comunitária, líderes locais e agentes políticos envolvidos com o bairro. Com o avanço do desenvolvimento, percebemos que a solução tem potencial para alcançar um público ainda maior, podendo ser aplicada em outros bairros, regionais e até em diferentes contextos urbanos.
+
+Para esta etapa de validação, apresentamos o sistema para **Gabriela Dourado**, comunicóloga, profissional da área de Arte e Cultura e ex-moradora da Vila Manoel Sátiro, que contribuiu com uma visão externa, mas ainda conectada à realidade da comunidade.
